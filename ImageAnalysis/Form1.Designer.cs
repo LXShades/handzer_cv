@@ -79,7 +79,7 @@
             this.AddFilterList.Size = new System.Drawing.Size(172, 21);
             this.AddFilterList.TabIndex = 2;
             this.AddFilterList.Text = "Select New Filter...";
-            this.AddFilterList.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.AddFilterList.SelectionChangeCommitted += new System.EventHandler(this.comboBox1_SelectionChangeCommitted);
             // 
             // groupBox2
             // 
