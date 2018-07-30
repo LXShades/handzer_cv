@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 
-namespace ImageAnalysis
+namespace ImageAnalysis.Images.Filters
 {
     /// <summary>
     /// Filter for an image

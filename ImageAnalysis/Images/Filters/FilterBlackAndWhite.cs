@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using ImageAnalysis;
 using System.Drawing;
 
-namespace ImageAnalysis
+namespace ImageAnalysis.Images.Filters
 {
     public class FilterBlackAndWhite : Filter
     {
