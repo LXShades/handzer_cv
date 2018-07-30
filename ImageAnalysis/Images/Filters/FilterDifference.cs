@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace ImageAnalysis.Images.Filters
 {
@@ -30,15 +31,16 @@ namespace ImageAnalysis.Images.Filters
 
         public void Apply(ref System.Drawing.Bitmap bitmap)
         {
-            System.Drawing.Imaging.BitmapData imageData = bitmap.LockBits(
-                new Rectangle(0, 0, bitmap.Width, bitmap.Height),
-                System.Drawing.Imaging.ImageLockMode.ReadWrite,
-                System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            Bitmap outputBitmap = new Bitmap(bitmap);
+
+            BitmapData imageData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+            BitmapData outputImageData = outputBitmap.LockBits(new Rectangle(0, 0, outputBitmap.Width, outputBitmap.Height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
 
             unsafe
             {
                 // Welcome back to unsafe-land, home of C++ and myself
                 uint* pixels = (uint*)imageData.Scan0.ToPointer();
+                uint* outputPixels = (uint*)outputImageData.Scan0.ToPointer();
 
                 for (int baseY = 0; baseY < bitmap.Height - PixelRadius; ++baseY)
                 {
@@ -53,7 +55,7 @@ namespace ImageAnalysis.Images.Filters
                         // Search the radius around this pixel and track the difference
                         for (int y = 0; y < PixelRadius; ++y)
                         {
-                            byte* subRs = (byte*)&pixelRs[(baseY + y) * imageData.Stride], subGs = &subRs[1], subBs = &subGs[1];
+                            byte* subRs = (byte*)&pixelRs[y * imageData.Stride], subGs = &subRs[1], subBs = &subGs[1];
 
                             for (int x = 0; x < PixelRadius; ++x)
                             {
@@ -67,12 +69,19 @@ namespace ImageAnalysis.Images.Filters
                                 bDiff = subBs[x << 2] - curB > bDiff ? subBs[x << 2] - curB : bDiff;
                             }
                         }
+
+                        // Write the difference to the output
+                        outputPixels[baseY * outputImageData.Stride / 4 + baseX] = 0xFF000000 | (uint)(rDiff << 16 | gDiff << 8 | bDiff);
                     }
                 }
             }
 
             // Release resources
             bitmap.UnlockBits(imageData);
+            outputBitmap.UnlockBits(outputImageData);
+
+            // Copy output data to input data
+            bitmap = new Bitmap(outputBitmap); // TODO there is a better way to do this...right?
         }
     }
 }

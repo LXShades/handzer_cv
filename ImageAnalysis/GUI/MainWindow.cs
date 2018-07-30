@@ -51,7 +51,7 @@ namespace ImageAnalysis.GUI
             try
             {
                 // Load an image
-                Bitmap image1 = (Bitmap)Image.FromFile(@".\BLARGH.png", true);
+                Bitmap image1 = (Bitmap)Image.FromFile(@"..\..\BLARGH.png", true);
                 GraphicsUnit srslyBruh = GraphicsUnit.Pixel;
 
                 // Apply filters to the image
