@@ -28,12 +28,12 @@ namespace ImageAnalysis.Images.Filters
                 for (int y = 0; y < bitmap.Height; ++y)
                 {
                     uint* pixelRow = &pixels[y * imageData.Stride / 4];
-                    byte* pixelRowAsBytes = (byte*)pixelRow; // split array into bytes so the colours can be retrieved without bitshifting
+                    byte* pixelRowB = (byte*)pixelRow, pixelRowG = &pixelRowB[1], pixelRowR = &pixelRowB[2]; // Split pixels into colour components
 
                     for (int x = 0; x < bitmap.Width; ++x)
                     {
                         // Use average of colours to get the black and white
-                        byte average = (byte)((pixelRowAsBytes[x << 2] + pixelRowAsBytes[(x << 2) + 1] + pixelRowAsBytes[(x << 2) + 2]) / 3);
+                        byte average = (byte)((pixelRowR[x<<2] + pixelRowG[x << 2] + pixelRowB[x << 2]) / 3);
                         pixelRow[x] = (pixelRow[x] & 0xFF000000) | (uint)((average) | (average << 8) | (average << 16));
                     }
                 }
