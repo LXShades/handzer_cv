@@ -14,6 +14,16 @@ namespace ImageAnalysis.GUI
 {
     public partial class MainWindow : Form
     {
+        /// <summary>
+        /// List of possible filters and their (TODO move type list to Filter.cs as static member?)
+        /// </summary>
+        private BindingList<FilterListItem> filterListItems = new BindingList<FilterListItem>();
+
+        /// <summary>
+        /// Items on the filter stack applied to the current image
+        /// </summary>
+        private BindingList<FilterListItem> filterStackItems = new BindingList<FilterListItem>();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -41,17 +51,17 @@ namespace ImageAnalysis.GUI
             filterList.DisplayMember = "Name";
 
             // Similarly, set the filter stack's data source to the filter stack items
-            ListBox filterStack = Controls.Find("FilterStack", true)[0] as ListBox;
-            filterStack.DataSource = filterStackItems;
-            filterStack.DisplayMember = "Name";
+            FilterStack.DataSource = filterStackItems;
+            FilterStack.DisplayMember = "Name";
         }
 
+        // Event handlers
         private void button1_Click(object sender, EventArgs e)
         {
             try
             {
                 // Load an image
-                Bitmap image1 = (Bitmap)Image.FromFile(@"..\..\BLARGH.png", true);
+                Bitmap image = (Bitmap)Image.FromFile(@"..\..\BLARGH.png", true);
                 GraphicsUnit srslyBruh = GraphicsUnit.Pixel;
 
                 // Apply filters to the image
@@ -59,20 +69,19 @@ namespace ImageAnalysis.GUI
                 {
                     Filter filterInstance = Activator.CreateInstance(filter.Type) as Filter;
                     
-                    filterInstance.Apply(ref image1);
+                    filterInstance.Apply(ref image);
                 }
-                
-                // Create the image texture
-                TextureBrush texture = new TextureBrush(image1)
-                {
-                    WrapMode = System.Drawing.Drawing2D.WrapMode.Tile
-                };
                 
                 // Draw the texture
                 Graphics formGraphics = this.CreateGraphics();
 
                 formGraphics.Clear(Color.SlateGray);
-                formGraphics.DrawImage(image1, image1.GetBounds(ref srslyBruh));
+                formGraphics.DrawImage(image, image.GetBounds(ref srslyBruh));
+
+                // Draw the highlighters (analysis stuff goes here?)
+                Analysis.EdgeHighlighter testHighlighter = new Analysis.EdgeHighlighter(new Point(0, 0), new Point(50, 50));
+                testHighlighter.Draw(ref formGraphics);
+
                 formGraphics.Dispose();
             }
             catch (System.IO.FileNotFoundException)
@@ -92,20 +101,49 @@ namespace ImageAnalysis.GUI
             filterStackItems.Add(item);
         }
 
+        private void MoveFilterUp_Click(object sender, EventArgs e)
+        {
+            if (FilterStack.SelectedIndex >= 1 && FilterStack.SelectedIndex < filterStackItems.Count)
+            {
+                // Move the item up an index
+                FilterListItem item = filterStackItems[FilterStack.SelectedIndex];
+                int originalSelectedIndex = FilterStack.SelectedIndex; // preserve the selected index
+
+                filterStackItems.RemoveAt(originalSelectedIndex);
+                filterStackItems.Insert(originalSelectedIndex - 1, item);
+
+                FilterStack.SelectedIndex = originalSelectedIndex - 1; // restore the selected index
+            }
+        }
+        
+        private void MoveFilterDown_Click(object sender, EventArgs e)
+        {
+            if (FilterStack.SelectedIndex >= 0 && FilterStack.SelectedIndex < filterStackItems.Count - 1)
+            {
+                // Move the item up an index
+                FilterListItem item = filterStackItems[FilterStack.SelectedIndex];
+                int originalSelectedIndex = FilterStack.SelectedIndex; // preserve the selected index
+
+                filterStackItems.RemoveAt(originalSelectedIndex);
+                filterStackItems.Insert(originalSelectedIndex + 1, item);
+
+                FilterStack.SelectedIndex = originalSelectedIndex + 1; // restore the selected index
+            }
+        }
+
+        private void DeleteFilter_Click(object sender, EventArgs e)
+        {
+            if (FilterStack.SelectedIndex >= 0 && FilterStack.SelectedIndex < filterStackItems.Count)
+            {
+                // Remove the item from the filter list
+                filterStackItems.RemoveAt(FilterStack.SelectedIndex);
+            }
+        }
+
         public struct FilterListItem
         {
             public string Name { get; set; }
             public Type Type;
         }
-
-        /// <summary>
-        /// List of possible filters and their (TODO move type list to Filter.cs as static member?)
-        /// </summary>
-        private BindingList<FilterListItem> filterListItems = new BindingList<FilterListItem>();
-
-        /// <summary>
-        /// Items on the filter stack applied to the current image
-        /// </summary>
-        private BindingList<FilterListItem> filterStackItems = new BindingList<FilterListItem>();
     }
 }

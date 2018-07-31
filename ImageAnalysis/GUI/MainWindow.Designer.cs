@@ -1,4 +1,6 @@
-﻿namespace ImageAnalysis.GUI
+﻿using System;
+
+namespace ImageAnalysis.GUI
 {
     partial class MainWindow
     {
@@ -31,9 +33,12 @@
             this.button1 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.MoveFilterDown = new System.Windows.Forms.Button();
+            this.MoveFilterUp = new System.Windows.Forms.Button();
+            this.DeleteFilter = new System.Windows.Forms.Button();
+            this.FilterStack = new System.Windows.Forms.ListBox();
             this.AddFilterList = new System.Windows.Forms.ComboBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.FilterStack = new System.Windows.Forms.ListBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -51,7 +56,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 94);
+            this.label1.Location = new System.Drawing.Point(6, 138);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(54, 13);
             this.label1.TabIndex = 1;
@@ -59,22 +64,63 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.MoveFilterDown);
+            this.groupBox1.Controls.Add(this.MoveFilterUp);
+            this.groupBox1.Controls.Add(this.DeleteFilter);
             this.groupBox1.Controls.Add(this.FilterStack);
             this.groupBox1.Controls.Add(this.AddFilterList);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Location = new System.Drawing.Point(12, 69);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(257, 118);
+            this.groupBox1.Size = new System.Drawing.Size(257, 165);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Filters";
+            // 
+            // MoveFilterDown
+            // 
+            this.MoveFilterDown.Location = new System.Drawing.Point(90, 81);
+            this.MoveFilterDown.Name = "MoveFilterDown";
+            this.MoveFilterDown.Size = new System.Drawing.Size(80, 23);
+            this.MoveFilterDown.TabIndex = 4;
+            this.MoveFilterDown.Text = "Move Down";
+            this.MoveFilterDown.UseVisualStyleBackColor = true;
+            this.MoveFilterDown.Click += new System.EventHandler(this.MoveFilterDown_Click);
+            // 
+            // MoveFilterUp
+            // 
+            this.MoveFilterUp.Location = new System.Drawing.Point(9, 81);
+            this.MoveFilterUp.Name = "MoveFilterUp";
+            this.MoveFilterUp.Size = new System.Drawing.Size(75, 23);
+            this.MoveFilterUp.TabIndex = 4;
+            this.MoveFilterUp.Text = "Move Up";
+            this.MoveFilterUp.UseVisualStyleBackColor = true;
+            this.MoveFilterUp.Click += new System.EventHandler(this.MoveFilterUp_Click);
+            // 
+            // DeleteFilter
+            // 
+            this.DeleteFilter.Location = new System.Drawing.Point(176, 81);
+            this.DeleteFilter.Name = "DeleteFilter";
+            this.DeleteFilter.Size = new System.Drawing.Size(75, 23);
+            this.DeleteFilter.TabIndex = 4;
+            this.DeleteFilter.Text = "Delete";
+            this.DeleteFilter.UseVisualStyleBackColor = true;
+            this.DeleteFilter.Click += new System.EventHandler(this.DeleteFilter_Click);
+            // 
+            // FilterStack
+            // 
+            this.FilterStack.FormattingEnabled = true;
+            this.FilterStack.Location = new System.Drawing.Point(9, 19);
+            this.FilterStack.Name = "FilterStack";
+            this.FilterStack.Size = new System.Drawing.Size(242, 56);
+            this.FilterStack.TabIndex = 4;
             // 
             // AddFilterList
             // 
             this.AddFilterList.FormattingEnabled = true;
             this.AddFilterList.Items.AddRange(new object[] {
             "Select New Filter..."});
-            this.AddFilterList.Location = new System.Drawing.Point(72, 91);
+            this.AddFilterList.Location = new System.Drawing.Point(72, 135);
             this.AddFilterList.Name = "AddFilterList";
             this.AddFilterList.Size = new System.Drawing.Size(172, 21);
             this.AddFilterList.TabIndex = 2;
@@ -90,14 +136,6 @@
             this.groupBox2.TabIndex = 3;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Image";
-            // 
-            // FilterStack
-            // 
-            this.FilterStack.FormattingEnabled = true;
-            this.FilterStack.Location = new System.Drawing.Point(9, 19);
-            this.FilterStack.Name = "FilterStack";
-            this.FilterStack.Size = new System.Drawing.Size(242, 56);
-            this.FilterStack.TabIndex = 4;
             // 
             // MainWindow
             // 
@@ -124,6 +162,9 @@
         private System.Windows.Forms.ComboBox AddFilterList;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.ListBox FilterStack;
+        private System.Windows.Forms.Button DeleteFilter;
+        private System.Windows.Forms.Button MoveFilterDown;
+        private System.Windows.Forms.Button MoveFilterUp;
     }
 }
 
