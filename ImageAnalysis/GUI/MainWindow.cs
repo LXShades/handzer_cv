@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Reflection;
 using ImageAnalysis.Images.Filters;
+using static WinApi.User32.User32Methods;
+using static WinApi.Gdi32.Gdi32Methods;
 
 namespace ImageAnalysis.GUI
 {
@@ -46,14 +48,15 @@ namespace ImageAnalysis.GUI
             }
 
             // Set the filter listbox's data source to that list
-            ComboBox filterList = Controls.Find("AddFilterList", true)[0] as ComboBox;
-            filterList.DataSource = filterListItems;
-            filterList.DisplayMember = "Name";
+            AddFilterList.DataSource = filterListItems;
+            AddFilterList.DisplayMember = "Name";
 
             // Similarly, set the filter stack's data source to the filter stack items
             FilterStack.DataSource = filterStackItems;
             FilterStack.DisplayMember = "Name";
         }
+        
+        // Test cam capture stuff
 
         // Event handlers
         private void button1_Click(object sender, EventArgs e)
@@ -62,6 +65,33 @@ namespace ImageAnalysis.GUI
             {
                 // Load an image
                 Bitmap image = (Bitmap)Image.FromFile(@"..\..\BLARGH.png", true);
+
+                // Actually, try capturing an image from the DroidCam Client
+                // Get DroidCam Client window
+                IntPtr hwndCaptureWindow = WinApi.User32.User32Methods.FindWindow(null, "DroidCam Client");
+
+                if (hwndCaptureWindow != null)
+                {
+                    // Get dimensions of the capture window
+                    NetCoreEx.Geometry.Rectangle rect = new NetCoreEx.Geometry.Rectangle();
+
+                    GetWindowRect(hwndCaptureWindow, out rect);
+
+                    // Do fancy DC bitblit
+                    IntPtr hdcFrom = GetDC(hwndCaptureWindow);
+                    IntPtr hdcTo = CreateCompatibleDC(hdcFrom);
+                    IntPtr bitmapTo = CreateCompatibleBitmap(hdcFrom, rect.Width, rect.Height);
+
+                    SelectObject(hdcTo, bitmapTo);
+                    BitBlt(hdcTo, 0, 0, rect.Width, rect.Height, hdcFrom, 0, 0, WinApi.Gdi32.BitBltFlags.SRCCOPY);
+
+                    image = Image.FromHbitmap(bitmapTo);
+
+                    DeleteObject(bitmapTo);
+                    DeleteDC(hdcTo);
+                    ReleaseDC(hwndCaptureWindow, hdcFrom);
+                }
+
                 GraphicsUnit srslyBruh = GraphicsUnit.Pixel;
 
                 // Apply filters to the image
@@ -86,7 +116,7 @@ namespace ImageAnalysis.GUI
             }
             catch (System.IO.FileNotFoundException)
             {
-                MessageBox.Show("There was an error opening the bitmap. " +
+                System.Windows.Forms.MessageBox.Show("There was an error opening the bitmap. " +
                     "Please check the path.");
             }
         }
