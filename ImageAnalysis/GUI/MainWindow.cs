@@ -59,60 +59,14 @@ namespace ImageAnalysis.GUI
         // Test cam capture stuff
 
         // Event handlers
-        private void button1_Click(object sender, EventArgs e)
+        private void BtnLoadImage_Click(object sender, EventArgs e)
         {
             try
             {
                 // Load an image
                 Bitmap image = (Bitmap)Image.FromFile(@"..\..\BLARGH.png", true);
 
-                // Actually, try capturing an image from the DroidCam Client
-                // Get DroidCam Client window
-                IntPtr hwndCaptureWindow = WinApi.User32.User32Methods.FindWindow(null, "DroidCam Client");
-
-                if (hwndCaptureWindow != null)
-                {
-                    // Get dimensions of the capture window
-                    NetCoreEx.Geometry.Rectangle rect = new NetCoreEx.Geometry.Rectangle();
-
-                    GetWindowRect(hwndCaptureWindow, out rect);
-
-                    // Do fancy DC bitblit
-                    IntPtr hdcFrom = GetDC(hwndCaptureWindow);
-                    IntPtr hdcTo = CreateCompatibleDC(hdcFrom);
-                    IntPtr bitmapTo = CreateCompatibleBitmap(hdcFrom, rect.Width, rect.Height);
-
-                    SelectObject(hdcTo, bitmapTo);
-                    BitBlt(hdcTo, 0, 0, rect.Width, rect.Height, hdcFrom, 0, 0, WinApi.Gdi32.BitBltFlags.SRCCOPY);
-
-                    image = Image.FromHbitmap(bitmapTo);
-
-                    DeleteObject(bitmapTo);
-                    DeleteDC(hdcTo);
-                    ReleaseDC(hwndCaptureWindow, hdcFrom);
-                }
-
-                GraphicsUnit srslyBruh = GraphicsUnit.Pixel;
-
-                // Apply filters to the image
-                foreach (FilterListItem filter in filterStackItems)
-                {
-                    Filter filterInstance = Activator.CreateInstance(filter.Type) as Filter;
-                    
-                    filterInstance.Apply(ref image);
-                }
-                
-                // Draw the texture
-                Graphics formGraphics = this.CreateGraphics();
-
-                formGraphics.Clear(Color.SlateGray);
-                formGraphics.DrawImage(image, image.GetBounds(ref srslyBruh));
-
-                // Draw the highlighters (analysis stuff goes here?)
-                Analysis.EdgeHighlighter testHighlighter = new Analysis.EdgeHighlighter(new Point(0, 0), new Point(50, 50));
-                testHighlighter.Draw(ref formGraphics);
-
-                formGraphics.Dispose();
+                ApplyImageFilters(ref image);
             }
             catch (System.IO.FileNotFoundException)
             {
@@ -121,7 +75,70 @@ namespace ImageAnalysis.GUI
             }
         }
 
-        private void comboBox1_SelectionChangeCommitted(object sender, EventArgs e)
+        private void BtnCaptureCam_Click(object sender, EventArgs e)
+        {
+            // Get DroidCam video window
+            IntPtr hwndCaptureWindow = WinApi.User32.User32Methods.FindWindow(null, "DroidCam Video");
+
+            if (hwndCaptureWindow != null)
+            {
+                // Get dimensions of the capture window
+                NetCoreEx.Geometry.Rectangle rect = new NetCoreEx.Geometry.Rectangle();
+
+                GetWindowRect(hwndCaptureWindow, out rect);
+
+                // Do fancy DC bitblit
+                IntPtr hdcFrom = GetDC(hwndCaptureWindow);
+                IntPtr hdcTo = CreateCompatibleDC(hdcFrom);
+                IntPtr bitmapTo = CreateCompatibleBitmap(hdcFrom, rect.Width, rect.Height);
+
+                SelectObject(hdcTo, bitmapTo);
+                BitBlt(hdcTo, 0, 0, rect.Width, rect.Height, hdcFrom, 0, 0, WinApi.Gdi32.BitBltFlags.SRCCOPY);
+
+                // Create the image
+                Bitmap image = Image.FromHbitmap(bitmapTo);
+
+                // Release resources
+                DeleteObject(bitmapTo);
+                DeleteDC(hdcTo);
+                ReleaseDC(hwndCaptureWindow, hdcFrom);
+
+                // Apply the image
+                ApplyImageFilters(ref image);
+            }
+        }
+
+        /// <summary>
+        /// Applies the filter list to the given image
+        /// TODO move and split this method
+        /// </summary>
+        /// <param name="image">The image to filter and display</param>
+        private void ApplyImageFilters(ref Bitmap image)
+        {
+            GraphicsUnit pixelUnits = GraphicsUnit.Pixel;
+
+            // Apply filters to the image
+            foreach (FilterListItem filter in filterStackItems)
+            {
+                Filter filterInstance = Activator.CreateInstance(filter.Type) as Filter;
+
+                filterInstance.Apply(ref image);
+            }
+
+            // Draw it TODO move
+            Graphics formGraphics = ImageBox.CreateGraphics();
+
+            formGraphics.Clear(Color.SlateGray);
+            formGraphics.DrawImage(image, image.GetBounds(ref pixelUnits));
+
+            // Draw the highlighters (analysis stuff goes here?)
+            Analysis.EdgeHighlighter testHighlighter = new Analysis.EdgeHighlighter(new Point(0, 0), new Point(50, 50));
+            testHighlighter.Draw(ref formGraphics);
+
+            formGraphics.Dispose();
+        }
+
+        private void AddFilterList_SelectionChangeCommitted(object sender, EventArgs e)
         {
             // Add the selected filter item to the filter stack
             ComboBox box = sender as ComboBox;
