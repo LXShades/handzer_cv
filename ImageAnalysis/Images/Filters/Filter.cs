@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using ImageAnalysis.Analysis.Highlighters;
 
 namespace ImageAnalysis.Images.Filters
 {
@@ -21,6 +22,6 @@ namespace ImageAnalysis.Images.Filters
         /// Applies the filter to an image
         /// </summary>
         /// <param name="bitmap">The image to be filtered</param>
-        void Apply(ref System.Drawing.Bitmap bitmap);
+        void Apply(ref Bitmap bitmap, out Highlighter[] highlightersOut);
     }
 }

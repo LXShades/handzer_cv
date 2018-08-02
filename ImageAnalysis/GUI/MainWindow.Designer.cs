@@ -163,6 +163,10 @@ namespace ImageAnalysis.GUI
             // 
             // ImageBox
             // 
+            this.ImageBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ImageBox.AutoSize = true;
             this.ImageBox.Location = new System.Drawing.Point(275, 12);
             this.ImageBox.Name = "ImageBox";
             this.ImageBox.Size = new System.Drawing.Size(470, 426);
@@ -185,6 +189,7 @@ namespace ImageAnalysis.GUI
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 

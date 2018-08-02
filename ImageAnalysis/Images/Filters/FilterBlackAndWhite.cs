@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ImageAnalysis;
 using System.Drawing;
+using ImageAnalysis.Analysis.Highlighters;
 
 namespace ImageAnalysis.Images.Filters
 {
@@ -12,7 +12,7 @@ namespace ImageAnalysis.Images.Filters
     {
         public string FilterName { get { return "Black and White"; } }
 
-        public void Apply(ref System.Drawing.Bitmap bitmap)
+        public void Apply(ref Bitmap bitmap, out Highlighter[] highlighters)
         {
             // Scan through all the pixels of the bitmap
             System.Drawing.Imaging.BitmapData imageData = bitmap.LockBits(
@@ -41,6 +41,9 @@ namespace ImageAnalysis.Images.Filters
 
             // Release resources
             bitmap.UnlockBits(imageData);
+
+            // No highlighters to return
+            highlighters = null;
         }
     }
 }

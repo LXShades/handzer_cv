@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Reflection;
 using ImageAnalysis.Images.Filters;
+using ImageAnalysis.Analysis.Highlighters;
 using static WinApi.User32.User32Methods;
 using static WinApi.Gdi32.Gdi32Methods;
 
@@ -116,13 +117,21 @@ namespace ImageAnalysis.GUI
         private void ApplyImageFilters(ref Bitmap image)
         {
             GraphicsUnit pixelUnits = GraphicsUnit.Pixel;
+            List<Highlighter> aggregateHighlighters = new List<Highlighter>();
 
             // Apply filters to the image
             foreach (FilterListItem filter in filterStackItems)
             {
                 Filter filterInstance = Activator.CreateInstance(filter.Type) as Filter;
+                Highlighter[] currentHighlighters;
 
-                filterInstance.Apply(ref image);
+                filterInstance.Apply(ref image, out currentHighlighters);
+
+                if (currentHighlighters != null)
+                {
+                    // Add this filter's highlighters to the aggregate highlighter list
+                    aggregateHighlighters.AddRange(currentHighlighters);
+                }
             }
 
             // Draw it TODO move
@@ -132,8 +141,10 @@ namespace ImageAnalysis.GUI
             formGraphics.DrawImage(image, image.GetBounds(ref pixelUnits));
 
             // Draw the highlighters (analysis stuff goes here?)
-            Analysis.EdgeHighlighter testHighlighter = new Analysis.EdgeHighlighter(new Point(0, 0), new Point(50, 50));
-            testHighlighter.Draw(ref formGraphics);
+            foreach (Highlighter highlighter in aggregateHighlighters)
+            {
+                highlighter.Draw(ref formGraphics);
+            }
 
             formGraphics.Dispose();
         }

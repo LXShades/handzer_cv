@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System;
+using ImageAnalysis.Analysis.Highlighters;
 
 namespace ImageAnalysis.Images.Filters
 {
@@ -30,7 +30,7 @@ namespace ImageAnalysis.Images.Filters
 
         public string FilterName { get { return "Difference"; } }
 
-        public void Apply(ref System.Drawing.Bitmap bitmap)
+        public void Apply(ref Bitmap bitmap, out Highlighter[] highlighters)
         {
             Bitmap outputBitmap = new Bitmap(bitmap);
 
@@ -93,6 +93,9 @@ namespace ImageAnalysis.Images.Filters
 
             // Copy output data to input data
             bitmap = new Bitmap(outputBitmap); // TODO there is a better way to do this...right?
+
+            // Done!No highlighters to return
+            highlighters = null;
         }
     }
 }

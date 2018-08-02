@@ -126,9 +126,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Analysis\EdgeHighlighter.cs" />
+    <Compile Include="Analysis\AnalyserVectoriser.cs" />
+    <Compile Include="Analysis\Highlighters\EdgeHighlighter.cs" />
+    <Compile Include="Analysis\Highlighters\GridHighlighter.cs" />
+    <Compile Include="Analysis\Highlighters\Highlighter.cs" />
     <Compile Include="Images\Filters\Filter.cs" />
     <Compile Include="Images\Filters\FilterBlackAndWhite.cs" />
+    <Compile Include="Images\Filters\FilterContrast.cs" />
     <Compile Include="Images\Filters\FilterDifference.cs" />
     <Compile Include="GUI\MainWindow.cs">
       <SubType>Form</SubType>
