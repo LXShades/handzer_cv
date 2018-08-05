@@ -136,7 +136,7 @@ namespace ImageAnalysis.GUI
 
             // Draw it TODO move
             Graphics formGraphics = ImageBox.CreateGraphics();
-
+            
             formGraphics.Clear(Color.SlateGray);
             formGraphics.DrawImage(image, image.GetBounds(ref pixelUnits));
 
@@ -146,6 +146,7 @@ namespace ImageAnalysis.GUI
                 highlighter.Draw(ref formGraphics);
             }
 
+            formGraphics.Flush();
             formGraphics.Dispose();
         }
 

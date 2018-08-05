@@ -16,5 +16,15 @@ namespace ImageAnalysis.Images
         {
             return (r > g ? (r > b ? r : b) : (g > b ? g : b));
         }
+
+        /// <summary>
+        /// Returns the brightness of a pixel
+        /// </summary>
+        /// <param name="pixel">The pixel colour in XRGB or ARGB</param>
+        /// <returns></returns>
+        public static byte PixelBrightness(uint pixel)
+        {
+            return Max((byte)(pixel >> 16), (byte)(pixel >> 8), (byte)pixel);
+        }
     }
 }

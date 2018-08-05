@@ -46,6 +46,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Win32.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -126,10 +127,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analysis\AnalyserTunnelFinder.cs" />
     <Compile Include="Analysis\AnalyserVectoriser.cs" />
     <Compile Include="Analysis\Highlighters\EdgeHighlighter.cs" />
     <Compile Include="Analysis\Highlighters\GridHighlighter.cs" />
     <Compile Include="Analysis\Highlighters\Highlighter.cs" />
+    <Compile Include="Analysis\Highlighters\PointHighlighter.cs" />
     <Compile Include="Images\Filters\Filter.cs" />
     <Compile Include="Images\Filters\FilterBlackAndWhite.cs" />
     <Compile Include="Images\Filters\FilterContrast.cs" />
@@ -141,6 +144,7 @@
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Images\ImageMath.cs" />
+    <Compile Include="Images\ImageReader.cs" />
     <Compile Include="Main\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="GUI\MainWindow.resx">
