@@ -13,41 +13,15 @@ namespace ImageAnalysis.Analysis.Highlighters
    public class EdgeHighlighter : Highlighter
     {
         /// <summary>
-        /// Visual line attributes
-        /// TODO proper way of documenting multiple self-explanatory properties
+        /// Line start and end coordinates
         /// </summary>
         public Point LineStart;
         public Point LineEnd;
 
-        public Color LineColour
-        {
-            get
-            {
-                return LineColour;
-            }
-            set
-            {
-                pen = new Pen(LineColour, (float)LineThickness);
-            }
-        }
-        private Color lineColour = Color.Red;
-       
-        public int LineThickness {
-            get
-            {
-                return lineThickness;
-            }
-            set
-            {
-                pen = new Pen(LineColour, (float)LineThickness);
-            }
-        }
-        private int lineThickness = 3;
-
         /// <summary>
         /// Pen used for rendering the line
         /// </summary>
-        private Pen pen = new Pen(Color.Red, 3);
+        public Pen Pen = new Pen(Color.Red, 3);
 
         public EdgeHighlighter(Point start, Point end)
         {
@@ -57,7 +31,7 @@ namespace ImageAnalysis.Analysis.Highlighters
 
         public void Draw(ref Graphics formGraphics)
         {
-            formGraphics.DrawLine(pen, LineStart, LineEnd);
+            formGraphics.DrawLine(Pen, LineStart, LineEnd);
         }
     }
 }

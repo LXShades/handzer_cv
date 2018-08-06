@@ -27,6 +27,12 @@ namespace ImageAnalysis.GUI
         /// </summary>
         private BindingList<FilterListItem> filterStackItems = new BindingList<FilterListItem>();
 
+        public struct FilterListItem
+        {
+            public string Name { get; set; }
+            public Type Type;
+        }
+
         public MainWindow()
         {
             InitializeComponent();
@@ -55,6 +61,8 @@ namespace ImageAnalysis.GUI
             // Similarly, set the filter stack's data source to the filter stack items
             FilterStack.DataSource = filterStackItems;
             FilterStack.DisplayMember = "Name";
+
+            testTip = new ToolTip();
         }
         
         // Test cam capture stuff
@@ -67,7 +75,7 @@ namespace ImageAnalysis.GUI
                 // Load an image
                 Bitmap image = (Bitmap)Image.FromFile(@"..\..\BLARGH.png", true);
 
-                ApplyImageFilters(ref image);
+                ApplyImageFilters(image);
             }
             catch (System.IO.FileNotFoundException)
             {
@@ -105,7 +113,7 @@ namespace ImageAnalysis.GUI
                 ReleaseDC(hwndCaptureWindow, hdcFrom);
 
                 // Apply the image
-                ApplyImageFilters(ref image);
+                ApplyImageFilters(image);
             }
         }
 
@@ -114,7 +122,7 @@ namespace ImageAnalysis.GUI
         /// TODO move and split this method
         /// </summary>
         /// <param name="image">The image to filter and display</param>
-        private void ApplyImageFilters(ref Bitmap image)
+        private void ApplyImageFilters(Bitmap image)
         {
             GraphicsUnit pixelUnits = GraphicsUnit.Pixel;
             List<Highlighter> aggregateHighlighters = new List<Highlighter>();
@@ -199,10 +207,16 @@ namespace ImageAnalysis.GUI
             }
         }
 
-        public struct FilterListItem
+        private void ImageBox_MouseClick(object sender, MouseEventArgs e)
         {
-            public string Name { get; set; }
-            public Type Type;
+            // Inform the input handler of the mouse click
+            Input.OnClick(e.X, e.Y);
+
+            // Reapply filters
+            // TODO don't reload image entirely
+            Bitmap image = (Bitmap)Image.FromFile(@"..\..\BLARGH.png", true);
+
+            ApplyImageFilters(image);
         }
     }
 }

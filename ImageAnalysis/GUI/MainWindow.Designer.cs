@@ -173,6 +173,7 @@ namespace ImageAnalysis.GUI
             this.ImageBox.TabIndex = 4;
             this.ImageBox.TabStop = false;
             this.ImageBox.Text = "Image Output";
+            this.ImageBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.ImageBox_MouseClick);
             // 
             // MainWindow
             // 

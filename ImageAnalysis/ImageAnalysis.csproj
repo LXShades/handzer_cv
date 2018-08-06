@@ -145,6 +145,7 @@
     </Compile>
     <Compile Include="Images\ImageMath.cs" />
     <Compile Include="Images\ImageReader.cs" />
+    <Compile Include="Main\Input.cs" />
     <Compile Include="Main\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="GUI\MainWindow.resx">

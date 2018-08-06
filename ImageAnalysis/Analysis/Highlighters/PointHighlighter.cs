@@ -32,6 +32,11 @@ namespace ImageAnalysis.Analysis.Highlighters
             Position = new Point(x, y);
         }
 
+        public PointHighlighter(Point position)
+        {
+            Position = position;
+        }
+
         public void Draw(ref Graphics graphics)
         {
             graphics.DrawLine(Pen, new Point(Position.X - CrossSize, Position.Y), new Point(Position.X + CrossSize, Position.Y));
