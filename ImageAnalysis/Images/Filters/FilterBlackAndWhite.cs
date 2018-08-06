@@ -10,9 +10,9 @@ namespace ImageAnalysis.Images.Filters
 {
     public class FilterBlackAndWhite : Filter
     {
-        public string FilterName { get { return "Black and White"; } }
+        public override string FilterName { get { return "Black and White"; } }
 
-        public void Apply(ref Bitmap bitmap, out Highlighter[] highlighters)
+        public override void Apply(ref Bitmap bitmap, out Highlighter[] highlighters)
         {
             // Scan through all the pixels of the bitmap
             System.Drawing.Imaging.BitmapData imageData = bitmap.LockBits(

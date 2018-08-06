@@ -11,9 +11,9 @@ namespace ImageAnalysis.Images.Filters
 {
     public class FilterContrast : Filter
     {
-        public string FilterName { get { return "Contrast"; } }
+        public override string FilterName { get { return "Contrast"; } }
 
-        public void Apply(ref Bitmap bitmap, out Highlighter[] highlighters)
+        public override void Apply(ref Bitmap bitmap, out Highlighter[] highlighters)
         {
             // Decide the factor to scale the colours
             int desiredBrightness = 0;

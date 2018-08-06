@@ -61,11 +61,7 @@ namespace ImageAnalysis.GUI
             // Similarly, set the filter stack's data source to the filter stack items
             FilterStack.DataSource = filterStackItems;
             FilterStack.DisplayMember = "Name";
-
-            testTip = new ToolTip();
         }
-        
-        // Test cam capture stuff
 
         // Event handlers
         private void BtnLoadImage_Click(object sender, EventArgs e)
@@ -139,6 +135,12 @@ namespace ImageAnalysis.GUI
                 {
                     // Add this filter's highlighters to the aggregate highlighter list
                     aggregateHighlighters.AddRange(currentHighlighters);
+                }
+
+                // Update the filter debug info box TODO move
+                if (FilterStack.SelectedIndex >= 0 && filter.Equals(filterStackItems[FilterStack.SelectedIndex]))
+                {
+                    FilterInfoBox.Text = filterInstance.DebugInfo;
                 }
             }
 

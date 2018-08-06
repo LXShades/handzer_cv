@@ -28,9 +28,9 @@ namespace ImageAnalysis.Images.Filters
         /// </summary>
         public DifferenceType DifferenceType = DifferenceType.MaxDifference;
 
-        public string FilterName { get { return "Difference"; } }
+        public override string FilterName { get { return "Difference"; } }
 
-        public void Apply(ref Bitmap bitmap, out Highlighter[] highlighters)
+        public override void Apply(ref Bitmap bitmap, out Highlighter[] highlighters)
         {
             Bitmap outputBitmap = new Bitmap(bitmap);
 

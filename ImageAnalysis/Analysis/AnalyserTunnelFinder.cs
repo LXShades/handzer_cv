@@ -15,9 +15,9 @@ namespace ImageAnalysis.Analysis
     /// </summary>
     class AnalyserTunnelFinder : Images.Filters.Filter
     {
-        public string FilterName { get { return "TunnelFind"; } }
+        public override string FilterName { get { return "TunnelFind"; } }
 
-        public void Apply(ref Bitmap bitmap, out Highlighter[] highlightersOut)
+        public override void Apply(ref Bitmap bitmap, out Highlighter[] highlightersOut)
         {
             // Make a copy of the bitmap filtered with the Difference filter
             Bitmap differenceBitmap = new Bitmap(bitmap);
@@ -165,15 +165,16 @@ namespace ImageAnalysis.Analysis
             for (int i = Input.LastClickPosition.X / gridInterval; i < gridLines.Count(); ++i)
             {
                 EdgePoint mostSimilarPoint = null;
-                float highestSimilarity = 0.0f;
+                SimilarityPack highestSimilarity = new SimilarityPack();
 
                 foreach (EdgePoint p in gridLines[i])
                 {
-                    float similarity;
+                    SimilarityPack similarity;
 
                     if (finalEdgeList.Count == 0)
                     {
-                        similarity = 1.0f / ((p.X - Input.LastClickPosition.X) * (p.X - Input.LastClickPosition.X) + (p.Y - Input.LastClickPosition.Y) * (p.Y - Input.LastClickPosition.Y));
+                        similarity = new SimilarityPack();
+                        similarity.Distance = 1.0f / ((p.X - Input.LastClickPosition.X) * (p.X - Input.LastClickPosition.X) + (p.Y - Input.LastClickPosition.Y) * (p.Y - Input.LastClickPosition.Y));
                     }
                     else if (finalEdgeList.Count == 1)
                     {
@@ -184,7 +185,7 @@ namespace ImageAnalysis.Analysis
                         similarity = p.CalculateSimilarity(finalEdgeList[finalEdgeList.Count - 1], finalEdgeList[finalEdgeList.Count - 2]);
                     }
 
-                    if (similarity >= highestSimilarity)
+                    if (similarity.OverallSimilarity >= highestSimilarity.OverallSimilarity)
                     {
                         mostSimilarPoint = p;
                         highestSimilarity = similarity;
@@ -192,6 +193,7 @@ namespace ImageAnalysis.Analysis
                 }
 
                 finalEdgeList.Add(mostSimilarPoint);
+                DebugInfo += highestSimilarity.Info + "\r\n";
             }
 
             for (int i = 1; i < finalEdgeList.Count; ++i)
@@ -279,13 +281,16 @@ namespace ImageAnalysis.Analysis
             /// <param name="point">Point to compare with</param>
             /// <param name="previousPoint">Point prior to 'point', if applicable</param>
             /// <returns>A floating-point similarity value between 0 and 1 where 1 is virtually identical</returns>
-            public float CalculateSimilarity(EdgePoint point, EdgePoint previousPoint = null)
+            public SimilarityPack CalculateSimilarity(EdgePoint point, EdgePoint previousPoint = null)
             {
-                float colourSimilarity = ImageMath.PixelDifference(ColourUnderPoint, point.ColourUnderPoint);
-                float directionSimilarity = 1.0f;
-                float lengthSimilarity = 1.0f;
-                float widthSimilarity = 1.0f;
-                float distanceSimilarity = 1.0f;
+                SimilarityPack similarity = new SimilarityPack()
+                {
+                    Colour = ImageMath.PixelDifference(ColourUnderPoint, point.ColourUnderPoint),
+                    Direction = 1.0f,
+                    Length = 1.0f,
+                    Width = 1.0f,
+                    Distance = 1.0f,
+                };
 
                 if (previousPoint != null)
                 {
@@ -295,14 +300,14 @@ namespace ImageAnalysis.Analysis
                     if (previousVector.LengthSquared() > 0 && currentVector.LengthSquared() > 0)
                     {
                         // Direction similarity: Use the dot product of the normalised segment vectors
-                        directionSimilarity = Vector2.Dot(previousVector / previousVector.Length(), currentVector / currentVector.Length());
+                        similarity.Direction = Vector2.Dot(previousVector / previousVector.Length(), currentVector / currentVector.Length());
 
                         // Length similarity: Use the smaller length divided by the bigger length.....?
-                        lengthSimilarity = previousVector.Length() / currentVector.Length();
+                        similarity.Length = previousVector.Length() / currentVector.Length();
 
-                        if (lengthSimilarity > 1.0f)
+                        if (similarity.Length > 1.0f)
                         {
-                            lengthSimilarity = 1.0f / lengthSimilarity; // swap the division operands lazily
+                            similarity.Length = 1.0f / similarity.Length; // swap the division operands lazily
                         }
                     }
                 }
@@ -310,23 +315,48 @@ namespace ImageAnalysis.Analysis
                 if (point.LastPoint != null && LastPoint != null)
                 {
                     // Width similarity: Use the smaller width divided by the bigger width?
-                    widthSimilarity = Vector2.Distance(new Vector2(X, Y), new Vector2(LastPoint.X, LastPoint.Y)) / 
+                    similarity.Width = Vector2.Distance(new Vector2(X, Y), new Vector2(LastPoint.X, LastPoint.Y)) / 
                                       Vector2.Distance(new Vector2(point.X, point.Y), new Vector2(point.LastPoint.X, point.LastPoint.Y));
 
-                    if (widthSimilarity > 1.0f)
+                    if (similarity.Width > 1.0f)
                     {
-                        widthSimilarity = 1.0f / widthSimilarity;
+                        similarity.Width = 1.0f / similarity.Width;
                     }
                 }
 
                 if (previousPoint == null)
                 {
                     float distanceToPoint = Vector2.Distance(new Vector2(X, Y), new Vector2(point.X, point.Y));
-                    distanceSimilarity = distanceToPoint > 0 ? 1.0f / distanceToPoint : 1.0f;
+                    similarity.Distance = distanceToPoint > 0 ? 1.0f / distanceToPoint : 1.0f;
                 }
 
-                return directionSimilarity + lengthSimilarity + widthSimilarity + colourSimilarity;
+                return similarity;
             }
+        }
+
+        public class SimilarityPack
+        {
+            public float OverallSimilarity
+            {
+                get
+                {
+                    return Colour + Direction + Length + Width + Distance;
+                }
+            }
+
+            public string Info
+            {
+                get
+                {
+                    return String.Format("Clr: {0:0.##} Dir: {1:0.##} Len: {2:0.##} Wid: {3:0.##} Dist: {4:0.##}", Colour, Direction, Length, Width, Distance);
+                }
+            }
+
+            public float Colour = 0.0f;
+            public float Direction = 0.0f;
+            public float Length = 0.0f;
+            public float Width = 0.0f;
+            public float Distance = 0.0f;
         }
     }
 }

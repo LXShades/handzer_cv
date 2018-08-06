@@ -11,17 +11,22 @@ namespace ImageAnalysis.Images.Filters
     /// <summary>
     /// Filter for an image
     /// </summary>
-    interface Filter
+    public abstract class Filter
     {
         /// <summary>
         /// The human-readable name of this filter
         /// </summary>
-        string FilterName { get; }
+        public virtual string FilterName { get; }
+
+        /// <summary>
+        /// Custom text to be written in the filter debug info box
+        /// </summary>
+        public string DebugInfo;
 
         /// <summary>
         /// Applies the filter to an image
         /// </summary>
         /// <param name="bitmap">The image to be filtered</param>
-        void Apply(ref Bitmap bitmap, out Highlighter[] highlightersOut);
+        public abstract void Apply(ref Bitmap bitmap, out Highlighter[] highlightersOut);
     }
 }

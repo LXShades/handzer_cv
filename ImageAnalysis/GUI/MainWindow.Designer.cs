@@ -42,7 +42,9 @@ namespace ImageAnalysis.GUI
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.BtnCaptureCam = new System.Windows.Forms.Button();
             this.ImageBox = new System.Windows.Forms.GroupBox();
+            this.FilterInfoBox = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -83,6 +85,7 @@ namespace ImageAnalysis.GUI
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.FilterInfoBox);
             this.groupBox4.Location = new System.Drawing.Point(9, 135);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(242, 201);
@@ -175,6 +178,16 @@ namespace ImageAnalysis.GUI
             this.ImageBox.Text = "Image Output";
             this.ImageBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.ImageBox_MouseClick);
             // 
+            // FilterInfoBox
+            // 
+            this.FilterInfoBox.Location = new System.Drawing.Point(7, 20);
+            this.FilterInfoBox.Multiline = true;
+            this.FilterInfoBox.Name = "FilterInfoBox";
+            this.FilterInfoBox.ReadOnly = true;
+            this.FilterInfoBox.Size = new System.Drawing.Size(228, 175);
+            this.FilterInfoBox.TabIndex = 0;
+            this.FilterInfoBox.Text = "Debug info is printed here";
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -188,6 +201,8 @@ namespace ImageAnalysis.GUI
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -208,6 +223,7 @@ namespace ImageAnalysis.GUI
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.Button BtnCaptureCam;
         private System.Windows.Forms.GroupBox ImageBox;
+        private System.Windows.Forms.TextBox FilterInfoBox;
     }
 }
 

@@ -13,9 +13,9 @@ namespace ImageAnalysis.Analysis
     /// </summary>
     class AnalyserVectoriser : Images.Filters.Filter
     {
-        public string FilterName { get { return "Vectorize"; } }
+        public override string FilterName { get { return "Vectorize"; } }
 
-        public void Apply(ref Bitmap bitmap, out Highlighter[] highlightersOut)
+        public override void Apply(ref Bitmap bitmap, out Highlighter[] highlightersOut)
         {
             List<Highlighter> highlighters = new List<Highlighter>();
 
